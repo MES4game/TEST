@@ -4,7 +4,6 @@ services:
     container_name: ${DOCKER_CONTAINER}
     restart: unless-stopped
     environment:
-      DEV: "false"
       HOST: "127.0.0.1"
       API_URL: "https://127.0.0.1/api"
       DATA_URL: "https://127.0.0.1/data"
