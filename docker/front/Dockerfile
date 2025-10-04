@@ -16,9 +16,9 @@ ENV HOST=127.0.0.1
 ENV API_URL=https://127.0.0.1/api
 ENV DATA_URL=https://127.0.0.1/data
 
-COPY --from=docker_config_folder /nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=docker_config_folder /runtime-config.json.template /runtime-config.json.template
-COPY --from=docker_config_folder /entrypoint.sh /entrypoint.sh
+COPY --from=docker_config_folder nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=docker_config_folder runtime-config.json.template /runtime-config.json.template
+COPY --from=docker_config_folder entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 WORKDIR /usr/share/nginx/html
