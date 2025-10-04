@@ -1,23 +1,24 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
+import path from "path";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 
+const DIRNAME = path.dirname(new URL(import.meta.url).pathname);
 const IS_PROD = process.env.NODE_ENV !== "development";
 const PORT    = Number(process.env.PORT ?? 3000);
 
-module.exports = {
-    entry: path.resolve(__dirname, "src", "index.tsx"),
+export default {
+    entry: path.resolve(DIRNAME, "src", "index.tsx"),
     output: {
         filename: "bundle.[contenthash].js",
-        path: path.resolve(__dirname, "build"),
+        path: path.resolve(DIRNAME, "build"),
         clean: true,
         publicPath: "/",
     },
     resolve: {
         extensions: [".tsx", ".ts", ".jsx", ".js"],
         alias: {
-            "@": path.resolve(__dirname, "src"),
+            "@": path.resolve(DIRNAME, "src"),
         },
     },
     module: {
@@ -37,13 +38,14 @@ module.exports = {
                 use: [
                     IS_PROD ? MiniCssExtractPlugin.loader : "style-loader",
                     "css-loader",
+                    "postcss-loader",
                 ],
             },
         ],
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: path.resolve(__dirname, "public", "index.html"),
+            template: path.resolve(DIRNAME, "public", "index.html"),
             inject: "body",
             scriptLoading: "defer",
         }),
@@ -63,11 +65,11 @@ module.exports = {
     devServer: {
         static: [
             {
-                directory: path.join(__dirname, "public"),
+                directory: path.join(DIRNAME, "public"),
                 watch: true,
             },
             {
-                directory: path.join(__dirname, "assets"),
+                directory: path.join(DIRNAME, "assets"),
                 watch: true,
             },
         ],

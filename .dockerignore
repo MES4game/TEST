@@ -1,5 +1,6 @@
 *
 
+!.dockerignore
 !docker/
 !docker/**
 
@@ -8,6 +9,7 @@
 !tsconfig.json
 
 !webpack.config.js
+!postcss.config.mjs
 !public/
 !public/**
 !src/
