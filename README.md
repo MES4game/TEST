@@ -28,18 +28,20 @@ Don't forget to run `chmod +x setup.sh && ./setup.sh` after cloning the reposito
 
 ## Usage
 
+Next steps define how to download the project and run it under a port/path, you will have to configure a webserver on your machine to access it from internet (using nginx, apache2, etc.).
+
 - ### Node.JS
   - need to clone the repository
   - need to have npm
-  1. open a terminal at the root of the repository
+  1. open a terminal at the root of the cloned repository
   2. run `npm ci`
   3. for development: run `npm run dev:run -- --port=<number>` and replace `<port>` with the port you want
   4. for production: run `npm run build:run -- --output-path=<path>` and replace `<path>` with the path of the folder you want (it needs to be created before)
 
 - ### Docker image
-  - no need to clone te repository
+  - NO need to clone the repository
   - image: [![Docker Image Version](https://img.shields.io/docker/v/ciapops/site-bde-front?sort=semver) ![Docker Image Size](https://img.shields.io/docker/image-size/ciapops/site-bde-front?sort=semver)](https://hub.docker.com/r/ciapops/site-bde-front)
-  - using docker-compose:
+  - docker-compose:
     1. open a terminal and navigate to the folder where you want to download the `docker-compose.yml` file
     2. you can find an example of `docker-compose.yml` in the [`docker config`](./.docker/front) folder
       - you can copy it with `curl -o docker-compose.yml https://raw.githubusercontent.com/CIA-PolytechPS/DEV-SITE-BDE-FRONT/main/.docker/front/docker-compose.yml`
