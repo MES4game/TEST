@@ -9,6 +9,7 @@ Don't forget to run `chmod +x setup.sh && ./setup.sh` after cloning the reposito
 ## Contents
 
 - [Usage](#usage)
+  - [Node.JS](#nodejs)
   - [Docker image](#docker-image)
 - [Structure](#structure)
 - [Commands](#commands)
@@ -27,7 +28,15 @@ Don't forget to run `chmod +x setup.sh && ./setup.sh` after cloning the reposito
 
 ## Usage
 
+- ### Node.JS
+  - need to clone the repository
+  - need to have npm
+  1. open a terminal at the root of the repository
+  2. for development: run `npm run dev:run -- --port=<number>` and replace `<port>` with the port you want
+  3. for production: run `npm run build:run -- --output-path=<path>` and replace `<path>` with the path of the folder you want (it needs to be created before)
+
 - ### Docker image
+  - no need to clone te repository
   - image: [![Docker Image Version](https://img.shields.io/docker/v/ciapops/site-bde-front?sort=semver) ![Docker Image Size](https://img.shields.io/docker/image-size/ciapops/site-bde-front?sort=semver)](https://hub.docker.com/r/ciapops/site-bde-front)
   - using docker-compose:
     1. open a terminal and navigate to the folder where you want to download the `docker-compose.yml` file
