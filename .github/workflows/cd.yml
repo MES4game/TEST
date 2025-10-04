@@ -3,11 +3,8 @@ name: CD
 on:
   push:
     tags:
-      - 'v*'
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-*'
 
 jobs:
   deploy:
@@ -46,8 +43,10 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ./docker/Dockerfile
+          context: ${{ vars.DOCKER_BUILD_CONTEXT }}
+          file: ${{ vars.DOCKER_CONFIG_FOLDER }}/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            DOCKER_CONFIG_FOLDER=${{ vars.DOCKER_CONFIG_FOLDER }}
