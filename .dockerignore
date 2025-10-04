@@ -1,0 +1,14 @@
+*
+
+!docker/
+!docker/**
+
+!package.json
+!package-lock.json
+!tsconfig.json
+
+!webpack.config.js
+!public/
+!public/**
+!src/
+!src/**
