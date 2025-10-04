@@ -1,3 +1,5 @@
+#!/bin/sh
+
 GITHUB_SETUP_ROOT="$(git rev-parse --show-toplevel)"
 GITHUB_SETUP_SSH_FOLDER="${GITHUB_SETUP_ROOT}/.ssh"
 GITHUB_SETUP_SSH_KEY='id_ed25519'
@@ -45,3 +47,19 @@ echo 'Even if you already add one, please add this one, it is a new one' > /dev/
 echo '##### START #####' > /dev/tty
 cat "${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_sign.pub" > /dev/tty
 echo '###### END ######' > /dev/tty
+
+GITHUB_SETUP_ASSETS_FOLDER="${GITHUB_SETUP_ROOT}/assets"
+rm -rf "${GITHUB_SETUP_ASSETS_FOLDER}"
+mkdir -p "${GITHUB_SETUP_ASSETS_FOLDER}"
+export DEV="true"
+export HOST="127.0.0.1"
+export API_URL="https://127.0.0.1/api"
+export DATA_URL="https://127.0.0.1/data"
+TARGET="${GITHUB_SETUP_ASSETS_FOLDER}/runtime-config.json"
+SOURCE="${GITHUB_SETUP_ROOT}/docker/front/runtime-config.json.template"
+rm -f "${TARGET}"
+touch "${TARGET}"
+while IFS= read -r line; do
+    eval "echo \"${line}\"" >> "${TARGET}"
+done < "${SOURCE}"
+chmod -R +r "${GITHUB_SETUP_ASSETS_FOLDER}"

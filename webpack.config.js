@@ -61,10 +61,16 @@ module.exports = {
     ],
     devtool: IS_PROD ? "source-map" : "eval-cheap-module-source-map",
     devServer: {
-        static: {
-            directory: path.join(__dirname, "public"),
-            watch: true,
-        },
+        static: [
+            {
+                directory: path.join(__dirname, "public"),
+                watch: true,
+            },
+            {
+                directory: path.join(__dirname, "assets"),
+                watch: true,
+            },
+        ],
         historyApiFallback: true,
         hot: true,
         host: "127.0.0.1",
