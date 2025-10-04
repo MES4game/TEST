@@ -28,8 +28,15 @@ Don't forget to run `chmod +x setup.sh && ./setup.sh` after cloning the reposito
 ## Usage
 
 - ### Docker image
-  - `docker pull ciapops/site-bde-front:latest` [![Docker Image Version](https://img.shields.io/docker/v/ciapops/site-bde-front?sort=semver) ![Docker Image Size](https://img.shields.io/docker/image-size/ciapops/site-bde-front?sort=semver)](https://hub.docker.com/r/ciapops/site-bde-front)
-  - you can find an example `docker-compose.yml` in the [`docker config`](./.docker/front) folder (you also need to copy `example.env` to `.env` and fill it with your own values)
+  - image: [![Docker Image Version](https://img.shields.io/docker/v/ciapops/site-bde-front?sort=semver) ![Docker Image Size](https://img.shields.io/docker/image-size/ciapops/site-bde-front?sort=semver)](https://hub.docker.com/r/ciapops/site-bde-front)
+  - using docker-compose:
+    1. open a terminal and navigate to the folder where you want to download the `docker-compose.yml` file
+    2. you can find an example of `docker-compose.yml` in the [`docker config`](./.docker/front) folder
+      - you can copy it with `curl -o docker-compose.yml https://raw.githubusercontent.com/CIA-PolytechPS/DEV-SITE-BDE-FRONT/main/.docker/front/docker-compose.yml`
+    3. you also need to copy [`example.env`](./.docker/front/example.env) to `.env`
+      - you can get it with `curl -o .env https://raw.githubusercontent.com/CIA-PolytechPS/DEV-SITE-BDE-FRONT/main/.docker/front/example.env`
+    4. edit `.env` to your needs
+    5. run `docker-compose up -d --force-recreate --pull always` to start the container
 
 ---
 
