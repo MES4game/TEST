@@ -1,9 +1,11 @@
 import { FC, ReactNode, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRotate } from "@fortawesome/free-solid-svg-icons";
-import "@/ui/components/common/loading.component.css";
+import { CircularProgress } from "@mui/material";
 
-const LoadingComp: FC = (): ReactNode => {
+interface LoadingCompProps {
+    size?: number;
+}
+
+const LoadingComp: FC<LoadingCompProps> = (props): ReactNode => {
     useEffect(() => {
         console.log("Loaded: LoadingComp");
     }, []);
@@ -13,9 +15,7 @@ const LoadingComp: FC = (): ReactNode => {
     });
 
     return (
-        <div className="common-loading">
-            <FontAwesomeIcon icon={faRotate} spin />
-        </div>
+        <CircularProgress size={props.size ?? 16} enableTrackSlot />
     );
 };
 

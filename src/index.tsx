@@ -3,6 +3,10 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { ENV } from "@/shared/config/env.config";
 import { GeneralVarsProvider } from "@/shared/contexts/common/general.context";
+import "@fontsource/roboto/300.css";
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+import "@fontsource/roboto/700.css";
 
 const CONTAINER = document.getElementById("root");
 
@@ -24,9 +28,17 @@ function render(App: FC) {
 
 render((await import("@/app")).default);
 
-// @ts-expect-error normally no problem
+// @ts-expect-error normally no runtime/compile problem
 if (import.meta.webpackHot) {
     console.log("webpackHot enabled");
-    // @ts-expect-error we do a check before so no problem
-    import.meta.webpackHot.accept("@/app", () => { void (async () => { render((await import("@/app")).default); })(); });  // eslint-disable-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+
+    // @ts-expect-error it is executed only if the detected error is not an error
+    import.meta.webpackHot.accept(  // eslint-disable-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+        "@/app",
+        () => {
+            void import("@/app")
+                .then((value) => { return value.default; })
+                .then(render);
+        },
+    );
 }

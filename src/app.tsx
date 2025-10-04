@@ -21,8 +21,8 @@ const App: FC = (): ReactNode => {
         <>
             <NavbarComp />
 
-            <main id="center">
-                <Suspense fallback={<LoadingComp />}>
+            <main id="main">
+                <Suspense fallback={<LoadingComp size={150} />}>
                     <Routes>
                         <Route path="/" element={<HomePage />} />
                         <Route path="*" element={<NotFoundPage />} />
