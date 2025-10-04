@@ -8,7 +8,7 @@
 !package-lock.json
 !tsconfig.json
 
-!webpack.config.js
+!webpack.config.mjs
 !postcss.config.mjs
 !public/
 !public/**
