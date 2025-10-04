@@ -48,5 +48,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            DOCKER_CONFIG_FOLDER=${{ vars.DOCKER_CONFIG_FOLDER }}
+          build-contexts: |
+            docker_config_folder=${{ vars.DOCKER_CONFIG_FOLDER }}

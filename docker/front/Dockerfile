@@ -1,10 +1,9 @@
-ARG DOCKER_CONFIG_FOLDER=./docker/front
-
 # Stage 1: Build React app with Webpack
 FROM node:24-alpine AS builder
 WORKDIR /app
 COPY ./package.json ./package.json
 COPY ./package-lock.json ./package-lock.json
+RUN npm install -g npm@latest
 RUN npm ci
 COPY . .
 RUN npm run build:run -- --output-path=/build
@@ -17,9 +16,9 @@ ENV HOST=127.0.0.1
 ENV API_URL=https://127.0.0.1/api
 ENV DATA_URL=https://127.0.0.1/data
 
-COPY $DOCKER_CONFIG_FOLDER/nginx.conf /etc/nginx/conf.d/default.conf
-COPY $DOCKER_CONFIG_FOLDER/runtime-config.json.template /runtime-config.json.template
-COPY $DOCKER_CONFIG_FOLDER/entrypoint.sh /entrypoint.sh
+COPY docker_config_folder/nginx.conf /etc/nginx/conf.d/default.conf
+COPY docker_config_folder/runtime-config.json.template /runtime-config.json.template
+COPY docker_config_folder/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 WORKDIR /usr/share/nginx/html
