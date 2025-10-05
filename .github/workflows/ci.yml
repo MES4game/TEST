@@ -6,8 +6,6 @@ on:
   pull_request:
     branches: [ "*" ]
 
-x-steps:
-
 jobs:
   setup:
     name: Setup job
