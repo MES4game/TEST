@@ -13,6 +13,7 @@ jobs:
     permissions:
       security-events: write
     steps:
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-node
 
       - name: Use eslint cache
@@ -41,6 +42,7 @@ jobs:
     name: Run unit tests
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-node
 
       - name: Testing
@@ -52,6 +54,7 @@ jobs:
     name: Test build of app
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-node
 
       - name: Use webpack cache
