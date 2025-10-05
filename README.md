@@ -107,7 +107,7 @@ Next steps define how to download the project and run it under a port/path, you 
 
 - ### Commits:
   - `<type>(<scope>): <comment>`
-    - `<type>`: type of the commit
+    - `<type>`: type of the commit (must be one of the following, can be combined with `|`):
       - `feat`: new feature
       - `fix`: bug fix
       - `docs`: documentation only changes
@@ -119,6 +119,9 @@ Next steps define how to download the project and run it under a port/path, you 
       - `merge`: merges branches
     - `<scope>`: name of the branch (`service-id`)
     - `<comment>`: short description of the commit
+  - example: `feat(user-42): add login feature`
+  - example: `feat|perf|style(home-21): add last event feature, improve performance for render and fix styles of first section`
+  - every commit must be signed with a GPG/SSH key (set it up with `./setup.sh`)
 
 - ### PR:
   - title: `merge(<source>-><target>): <comment>`

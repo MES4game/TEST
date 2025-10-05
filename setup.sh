@@ -12,7 +12,7 @@ gitSetupPart() {
     symbols=$(printf "%${count}s" "" | tr ' ' '#')
     extra=""
     [ $(( (cols - msg_len - 2) % 2 )) -ne 0 ] && extra="#"
-    echo "\033[31m${symbols}\033[0m \033[1;31m$1\033[0m \033[31m${symbols}${extra}\033[0m" > /dev/tty
+    echo "\033[34m${symbols}\033[0m \033[1;34m$1\033[0m \033[34m${symbols}${extra}\033[0m" > /dev/tty
 }
 
 #########################################################################################################################################################################
@@ -27,78 +27,12 @@ read -p "Your GitHub email: " GITHUB_SETUP_EMAIL > /dev/tty
 read -p "Your GitHub pseudo: " GITHUB_SETUP_USER > /dev/tty
 
 #########################################################################################################################################################################
-#                                                                               GIT CONFIG                                                                              #
+#                                                                              NPM INSTALL                                                                              #
 #########################################################################################################################################################################
-gitSetupPart 'GIT CONFIG'
+gitSetupPart 'NPM INSTALL'
 cd "${GITHUB_SETUP_ROOT}"
 
-git config user.signingkey "${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_sign"
-git config core.sshCommand "ssh -i ${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_auth -F /dev/null"
-
-git config user.name "${GITHUB_SETUP_USER}"
-git config user.email "${GITHUB_SETUP_EMAIL}"
-git config commit.gpgsign true
-git config gpg.format ssh
-git config pull.rebase false
-git config push.default simple
-git config core.editor "code --wait"
-git config merge.tool vimdiff
-git config mergetool.prompt false
-git config core.autocrlf input
-git config core.safecrlf true
-git config color.ui auto
-git config color.branch auto
-git config color.diff auto
-git config color.status auto
-git config commit.cleanup strip
-git config log.abbrevCommit true
-git config log.showSignature true
-
-#########################################################################################################################################################################
-#                                                                               GIT HOOKS                                                                               #
-#########################################################################################################################################################################
-gitSetupPart 'GIT HOOKS'
-cd "${GITHUB_SETUP_ROOT}"
-
-echo '#!/bin/sh
-
-MSG_FILE="$1"
-MSG=$(cat "$MSG_FILE")
-BRANCH=$(git symbolic-ref --short HEAD)
-TYPES="feat|fix|docs|style|refactor|perf|test|chore"
-PATTERN="^(${TYPES})\(${BRANCH}\): .+"
-
-if ! echo "${MSG}" | grep -Eq "${PATTERN}"; then
-    echo "ERROR: Invalid commit message."
-    echo "Your message must follow the format:"
-    echo "<type>(<scope>): <comment>"
-    echo "Where <type> is one of: ${TYPES}"
-    echo "and <scope> must match your branch name: ${BRANCH}"
-    echo "Example: feat(my-branch): add new feature"
-    exit 1
-fi' > "${GITHUB_SETUP_ROOT}/.git/hooks/commit-msg"
-chmod +x "${GITHUB_SETUP_ROOT}/.git/hooks/commit-msg"
-
-#########################################################################################################################################################################
-#                                                                                SSH KEYS                                                                               #
-#########################################################################################################################################################################
-gitSetupPart 'SSH KEYS'
-cd "${GITHUB_SETUP_ROOT}"
-
-GITHUB_SETUP_SSH_FILES="${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_auth ${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_auth.pub ${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_sign ${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_sign.pub"
-for file in ${GITHUB_SETUP_SSH_FILES}; do
-    if [ ! -f "${file}" ]; then
-        echo "Generating new SSH keys in ${GITHUB_SETUP_SSH_FOLDER}..." > /dev/tty
-        rm -rf "${GITHUB_SETUP_SSH_FOLDER}"
-        mkdir -p "${GITHUB_SETUP_SSH_FOLDER}"
-        ssh-keygen -t ed25519 -a 100 -C "${GITHUB_SETUP_EMAIL}" -f "${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_auth" -N "" > /dev/null
-        ssh-keygen -t ed25519 -a 100 -C "${GITHUB_SETUP_EMAIL}" -f "${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_sign" -N "" > /dev/null
-        break
-    fi
-done
-chmod -R 0600 "${GITHUB_SETUP_SSH_FOLDER}"
-chmod +r "${GITHUB_SETUP_SSH_FOLDER}"/*.pub
-chmod +x "${GITHUB_SETUP_SSH_FOLDER}"
+npm install
 
 #########################################################################################################################################################################
 #                                                                                 ASSETS                                                                                #
@@ -122,27 +56,94 @@ done < "${SOURCE}"
 chmod -R +r "${GITHUB_SETUP_ASSETS_FOLDER}"
 
 #########################################################################################################################################################################
-#                                                                              NPM INSTALL                                                                              #
+#                                                                               GIT CONFIG                                                                              #
 #########################################################################################################################################################################
-gitSetupPart 'NPM INSTALL'
+gitSetupPart 'GIT CONFIG'
 cd "${GITHUB_SETUP_ROOT}"
 
-npm install
+git config user.name "${GITHUB_SETUP_USER}"
+git config user.email "${GITHUB_SETUP_EMAIL}"
+git config user.signingkey "${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_sign"
+git config core.sshCommand "ssh -i ${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_auth -F /dev/null"
+git config core.editor "code --wait"
+git config core.autocrlf input
+git config core.safecrlf true
+git config gpg.format ssh
+git config commit.gpgsign true
+git config commit.cleanup strip
+git config pull.rebase true
+git config push.default current
+git config merge.ff only
+git config merge.tool vimdiff
+git config mergetool.prompt false
+git config color.ui auto
+git config color.branch auto
+git config color.diff auto
+git config color.status auto
+git config log.abbrevCommit true
+git config log.showSignature true
 
 #########################################################################################################################################################################
-#                                                                                  END                                                                                  #
+#                                                                               GIT HOOKS                                                                               #
 #########################################################################################################################################################################
-gitSetupPart 'END'
+gitSetupPart 'GIT HOOKS'
 cd "${GITHUB_SETUP_ROOT}"
 
-echo 'Please add this AUTHENTICATION key on your github user' > /dev/tty
-echo 'Even if you already add one, please add this one, it is a new one' > /dev/tty
-echo '##### START #####' > /dev/tty
-cat "${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_auth.pub" > /dev/tty
-echo '###### END ######' > /dev/tty
+echo '#!/bin/sh
 
-echo 'Please add this SIGNING key on your github user' > /dev/tty
-echo 'Even if you already add one, please add this one, it is a new one' > /dev/tty
-echo '##### START #####' > /dev/tty
-cat "${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_sign.pub" > /dev/tty
-echo '###### END ######' > /dev/tty
+MSG_FILE="$1"
+MSG=$(cat "$MSG_FILE")
+BRANCH=$(git symbolic-ref --short HEAD)
+TYPES="feat|fix|docs|style|refactor|perf|test|chore"
+PATTERN="^(${TYPES}(\|(${TYPES}))*)\(${BRANCH}\): .+"
+
+if ! echo "${MSG}" | grep -Eq "${PATTERN}"; then
+    echo "ERROR: Invalid commit message."
+    echo "Your message must follow the format:"
+    echo "<type>(<scope>): <comment>"
+    echo "Where <type> is one (or more separated by "|") of: ${TYPES}"
+    echo "and <scope> must match your branch name: ${BRANCH}"
+    echo "Example: feat(my-branch): add component x ..."
+    echo "Example: feat|style|refactor(my-branch): add component x ... and fix style ... and refactor code ..."
+    exit 1
+fi
+
+exit 0
+' > "${GITHUB_SETUP_ROOT}/.git/hooks/commit-msg"
+chmod +x "${GITHUB_SETUP_ROOT}/.git/hooks/commit-msg"
+
+#########################################################################################################################################################################
+#                                                                                SSH KEYS                                                                               #
+#########################################################################################################################################################################
+gitSetupPart 'SSH KEYS'
+cd "${GITHUB_SETUP_ROOT}"
+
+GITHUB_SETUP_SSH_FILES="${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_auth ${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_auth.pub ${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_sign ${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_sign.pub"
+for file in ${GITHUB_SETUP_SSH_FILES}; do
+    if [ ! -r "${file}" ]; then
+        echo "\033[32mGenerating new SSH keys in ${GITHUB_SETUP_SSH_FOLDER}...\033[0m" > /dev/tty
+        echo > /dev/tty
+
+        rm -rf "${GITHUB_SETUP_SSH_FOLDER}"
+        mkdir -p "${GITHUB_SETUP_SSH_FOLDER}"
+        ssh-keygen -t ed25519 -a 100 -C "${GITHUB_SETUP_EMAIL}" -f "${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_auth" -N "" > /dev/null
+        ssh-keygen -t ed25519 -a 100 -C "${GITHUB_SETUP_EMAIL}" -f "${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_sign" -N "" > /dev/null
+
+        echo 'Please add this AUTHENTICATION key on your github user' > /dev/tty
+        echo 'Even if you already add one, please add this one, it is a new one' > /dev/tty
+        echo '\033[31m##### START #####\033[0m' > /dev/tty
+        cat "\033[31m${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_auth.pub\033[0m" > /dev/tty
+        echo '\033[31m###### END ######\033[0m' > /dev/tty
+
+        echo 'Please add this SIGNING key on your github user' > /dev/tty
+        echo 'Even if you already add one, please add this one, it is a new one' > /dev/tty
+        echo '\033[31m##### START #####\033[0m' > /dev/tty
+        cat "\033[31m${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_sign.pub\033[0m" > /dev/tty
+        echo '\033[31m###### END ######\033[0m' > /dev/tty
+
+        break
+    fi
+done
+chmod -R 0600 "${GITHUB_SETUP_SSH_FOLDER}"
+chmod +r "${GITHUB_SETUP_SSH_FOLDER}"/*.pub
+chmod +x "${GITHUB_SETUP_SSH_FOLDER}"
