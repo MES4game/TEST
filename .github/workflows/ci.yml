@@ -6,23 +6,7 @@ on:
   pull_request:
     branches: [ "*" ]
 
-x-steps: &setup-steps
-  - name: Checkout repository
-    uses: actions/checkout@v5
-
-  - name: Use Node.js 22
-    uses: actions/setup-node@v5
-    with:
-      node-version: 22
-
-  - name: Use npm cache
-    uses: actions/cache@v4
-    with:
-      path: |
-        ~/.npm
-        node_modules
-      key: cache-npm-${{ hashFiles('package-lock.json') }}
-      restore-keys: cache-npm-
+x-steps:
 
 jobs:
   setup:
@@ -30,8 +14,23 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    steps:
-      - *setup-steps
+    steps: &setup-steps
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Use npm cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: cache-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: cache-npm-
 
       - name: Update npm
         run: npm install -g npm@latest
