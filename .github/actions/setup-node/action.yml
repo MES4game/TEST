@@ -23,7 +23,7 @@ runs:
     - name: Install packages
       run: |
         npm ci
-        npm install -E -D eslint-formatter-gha
+        npm install -E -D @microsoft/eslint-formatter-sarif@3.1.0
       shell: bash
 
     - name: Save node_modules cache
