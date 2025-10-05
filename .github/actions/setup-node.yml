@@ -1,0 +1,28 @@
+name: "Setup Node + npm cache"
+description: "Checkout repo, setup Node.js, and cache npm dependencies"
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v5
+
+    - name: Use Node.js 22
+      uses: actions/setup-node@v5
+      with:
+        node-version: 22
+        cache: 'npm'
+
+    - name: Use node_modules cache
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: cache-node_modules-${{ hashFiles('package-lock.json') }}
+        restore-keys: cache-npmnode_modules-
+
+    - name: Update npm
+      run: npm install -g npm@latest
+
+    - name: Install packages
+      run: |
+        npm ci
+        npm install @microsoft/eslint-formatter-sarif@3.1.0
