@@ -109,5 +109,6 @@ export default {
     },
     cache: {
         type: "filesystem",
+        cacheDirectory: path.resolve(DIRNAME, ".webpackcache"),
     },
 };

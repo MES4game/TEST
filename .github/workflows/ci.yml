@@ -6,22 +6,32 @@ on:
   pull_request:
     branches: [ "*" ]
 
+x-steps: &setup-steps
+  - name: Checkout repository
+    uses: actions/checkout@v5
+
+  - name: Use Node.js 22
+    uses: actions/setup-node@v5
+    with:
+      node-version: 22
+
+  - name: Use npm cache
+    uses: actions/cache@v4
+    with:
+      path: |
+        ~/.npm
+        node_modules
+      key: cache-npm-${{ hashFiles('package-lock.json') }}
+      restore-keys: cache-npm-
+
 jobs:
-  lint:
-    name: Run lint scanning
+  setup:
+    name: Setup job
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      security-events: write
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
-
-      - name: Use Node.js 22
-        uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: "npm"
+      - *setup-steps
 
       - name: Update npm
         run: npm install -g npm@latest
@@ -30,6 +40,25 @@ jobs:
         run: |
           npm ci
           npm install @microsoft/eslint-formatter-sarif@3.1.0
+
+  lint:
+    if: ${{ always() }}
+    needs: setup
+    name: Run lint scanning
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - *setup-steps
+
+      - name: Use eslint cache
+        id: cache-eslint
+        uses: actions/cache@v4
+        with:
+          path: .eslintcache
+          key: cache-eslint-${{ hashFiles('src/**/*', 'eslint.config.mjs') }}
+          restore-keys: cache-eslint-
 
       - name: Run ESLint
         env:
@@ -43,8 +72,36 @@ jobs:
           sarif_file: eslint-results.sarif
           wait-for-processing: true
 
+  test:
+    if: ${{ always() }}
+    needs: [setup, lint]
+    name: Run unit tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - *setup-steps
+
       - name: Testing
         run: echo TODO test
+
+  build:
+    if: ${{ always() }}
+    needs: [setup, lint, test]
+    name: Test build of app
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - *setup-steps
+
+      - name: Use webpack cache
+        id: cache-webpack
+        uses: actions/cache@v4
+        with:
+          path: .webpackcache
+          key: cache-webpack-${{ hashFiles('package-lock.json') }}
+          restore-keys: cache-webpack-
 
       - name: Build Testing
         run: npm run build
