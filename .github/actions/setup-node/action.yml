@@ -1,5 +1,5 @@
-name: "Setup Node + npm cache"
-description: "Checkout repo, setup Node.js, and cache npm dependencies"
+name: Setup Node + npm cache
+description: Checkout repo, setup Node.js, and cache npm dependencies
 runs:
   using: "composite"
   steps:

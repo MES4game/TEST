@@ -13,7 +13,7 @@ jobs:
     permissions:
       security-events: write
     steps:
-      - uses: ./.github/actions/setup-node.yml
+      - uses: ./.github/actions/setup-node
 
       - name: Use eslint cache
         id: cache-eslint
@@ -41,7 +41,7 @@ jobs:
     name: Run unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/setup-node.yml
+      - uses: ./.github/actions/setup-node
 
       - name: Testing
         run: echo TODO test
@@ -52,7 +52,7 @@ jobs:
     name: Test build of app
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/setup-node.yml
+      - uses: ./.github/actions/setup-node
 
       - name: Use webpack cache
         id: cache-webpack
