@@ -19,8 +19,9 @@ runs:
         path: |
           ~/.npm
           node_modules
-        key: cache-node-${{ hashFiles('package-lock.json') }}-${{ github.sha }}
+        key: cache-node-${{ hashFiles('package-lock.json') }}-${{ github.run_attempt }}-${{ github.run_id }}
         restore-keys: |
+          cache-node-${{ hashFiles('package-lock.json') }}-${{ github.run_attempt }}-
           cache-node-${{ hashFiles('package-lock.json') }}-
           cache-node-
 
@@ -47,4 +48,4 @@ runs:
         path: |
           ~/.npm
           node_modules
-        key: cache-node-${{ hashFiles('package-lock.json') }}-${{ github.sha }}
+        key: cache-node-${{ hashFiles('package-lock.json') }}-${{ github.run_attempt }}-${{ github.run_id }}
