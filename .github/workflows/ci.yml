@@ -13,6 +13,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-node
+        with:
+          install: true
 
   lint:
     name: Run lint scanning
@@ -37,8 +39,10 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: .eslintcache
-          key: cache-eslint-${{ hashFiles('src/**/*', 'eslint.config.mjs', 'tsconfig.json', 'package.json') }}
-          restore-keys: cache-eslint-
+          key: cache-eslint-${{ hashFiles('src/**/*', 'eslint.config.mjs', 'tsconfig.json', 'package.json') }}-${{ github.sha }}
+          restore-keys: |
+            cache-eslint-${{ hashFiles('src/**/*', 'eslint.config.mjs', 'tsconfig.json', 'package.json') }}-
+            cache-eslint-
 
       - name: Run ESLint
         env:
@@ -50,7 +54,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: .eslintcache
-          key: cache-eslint-${{ hashFiles('src/**/*', 'eslint.config.mjs', 'tsconfig.json', 'package.json') }}
+          key: cache-eslint-${{ hashFiles('src/**/*', 'eslint.config.mjs', 'tsconfig.json', 'package.json') }}-${{ github.sha }}
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
@@ -92,8 +96,10 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: .webpackcache
-          key: cache-webpack-${{ hashFiles('src/**/*', 'public/**/*', 'postcss.config.mjs', 'webpack.config.mjs', 'package.json') }}
-          restore-keys: cache-webpack-
+          key: cache-webpack-${{ hashFiles('src/**/*', 'public/**/*', 'postcss.config.mjs', 'webpack.config.mjs', 'package.json') }}-${{ github.sha }}
+          restore-keys: |
+            cache-webpack-${{ hashFiles('src/**/*', 'public/**/*', 'postcss.config.mjs', 'webpack.config.mjs', 'package.json') }}-
+            cache-webpack-
 
       - name: Build Testing
         run: npm run build
@@ -102,4 +108,4 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: .webpackcache
-          key: cache-webpack-${{ hashFiles('src/**/*', 'public/**/*', 'postcss.config.mjs', 'webpack.config.mjs', 'package.json') }}
+          key: cache-webpack-${{ hashFiles('src/**/*', 'public/**/*', 'postcss.config.mjs', 'webpack.config.mjs', 'package.json') }}-${{ github.sha }}
