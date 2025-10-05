@@ -12,13 +12,22 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       security-events: write
+      packages: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - language: actions
+          build-mode: none
+        - language: javascript-typescript
+          build-mode: none
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-node
 
       - name: Use eslint cache
         id: cache-eslint
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: .eslintcache
           key: cache-eslint-${{ hashFiles('src/**/*', 'eslint.config.mjs', 'tsconfig.json', 'package.json') }}
@@ -27,14 +36,32 @@ jobs:
       - name: Run ESLint
         env:
           SARIF_ESLINT_IGNORE_SUPPRESSED: "true"
-        run: npm run lint:run -- --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
+        run: npm run lint:run -- --format gha --output-file eslint-results.sarif
         continue-on-error: true
 
-      - name: Upload analysis results to GitHub
+      - name: Use eslint cache
+        id: cache-eslint
+        uses: actions/cache/save@v4
+        with:
+          path: .eslintcache
+          key: cache-eslint-${{ hashFiles('src/**/*', 'eslint.config.mjs', 'tsconfig.json', 'package.json') }}
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      - name: Upload eslint results to GitHub
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: eslint-results.sarif
           wait-for-processing: true
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{matrix.language}}"
 
   test:
     if: ${{ always() }}
@@ -59,7 +86,7 @@ jobs:
 
       - name: Use webpack cache
         id: cache-webpack
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: .webpackcache
           key: cache-webpack-${{ hashFiles('src/**/*', 'public/**/*', 'postcss.config.mjs', 'webpack.config.mjs', 'package.json') }}
@@ -67,3 +94,10 @@ jobs:
 
       - name: Build Testing
         run: npm run build
+
+      - name: Use webpack cache
+        id: cache-webpack
+        uses: actions/cache/save@v4
+        with:
+          path: .webpackcache
+          key: cache-webpack-${{ hashFiles('src/**/*', 'public/**/*', 'postcss.config.mjs', 'webpack.config.mjs', 'package.json') }}

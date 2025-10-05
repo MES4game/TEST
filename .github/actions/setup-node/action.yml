@@ -10,7 +10,7 @@ runs:
         cache: 'npm'
 
     - name: Use node_modules cache
-      uses: actions/cache@v4
+      uses: actions/cache/restore@v4
       with:
         path: node_modules
         key: cache-node_modules-${{ hashFiles('package-lock.json') }}
@@ -23,5 +23,11 @@ runs:
     - name: Install packages
       run: |
         npm ci
-        npm install @microsoft/eslint-formatter-sarif@3.1.0
+        npm install -E -D eslint-formatter-gha
       shell: bash
+
+    - name: Use node_modules cache
+      uses: actions/cache/save@v4
+      with:
+        path: node_modules
+        key: cache-node_modules-${{ hashFiles('package-lock.json') }}
