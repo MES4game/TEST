@@ -99,7 +99,9 @@ jobs:
             cache-webpack-
 
       - name: Build Testing
-        run: npm run build
+        run: |
+          [ -d .webpackcache ] && echo "Using webpack cache" && ls -al .webpackcache || echo "No webpack cache found"
+          npm run build
 
       - name: Save webpack cache
         uses: actions/cache/save@v4

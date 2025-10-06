@@ -25,11 +25,10 @@ runs:
           cache-node-${{ hashFiles('package-lock.json') }}-
           cache-node-
 
-    - name: Skip install if not requested
-      if: ${{ inputs.install != 'true' }}
+    - name: Test node cache
       run: |
-        echo "install is not true, quitting this action early"
-        exit 0
+        [ -d ~/.npm ] && echo "Using npm cache" || echo "No npm cache found"
+        [ -d node_modules ] && echo "Using node_modules cache" && ls -al node_modules || echo "No node_modules cache found"
       shell: bash
 
     - name: Update npm
