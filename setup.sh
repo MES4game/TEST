@@ -148,13 +148,13 @@ for file in ${GITHUB_SETUP_SSH_FILES}; do
         echo 'Please add this AUTHENTICATION key on your github user' > /dev/tty
         echo 'Even if you already add one, please add this one, it is a new one' > /dev/tty
         echo '\033[31m##### START #####\033[0m' > /dev/tty
-        cat "\033[31m${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_auth.pub\033[0m" > /dev/tty
+        cat "${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_auth.pub" > /dev/tty
         echo '\033[31m###### END ######\033[0m' > /dev/tty
 
         echo 'Please add this SIGNING key on your github user' > /dev/tty
         echo 'Even if you already add one, please add this one, it is a new one' > /dev/tty
         echo '\033[31m##### START #####\033[0m' > /dev/tty
-        cat "\033[31m${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_sign.pub\033[0m" > /dev/tty
+        cat "${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_sign.pub" > /dev/tty
         echo '\033[31m###### END ######\033[0m' > /dev/tty
 
         break
