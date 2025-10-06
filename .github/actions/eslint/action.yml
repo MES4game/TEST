@@ -16,9 +16,7 @@ runs:
     - name: Run ESLint
       env:
         SARIF_ESLINT_IGNORE_SUPPRESSED: "true"
-      run: |
-        [ -f .eslintcache ] && echo "Using eslint cache" || echo "No eslint cache found"
-        npm run lint:run -- --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
+      run: npm run lint:run -- --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
       shell: bash
       continue-on-error: true
 

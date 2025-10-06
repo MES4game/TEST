@@ -18,9 +18,10 @@ jobs:
           fetch-depth: 0
 
       - name: Extract version & title from PR title
-        id: extract
+        id: extractmeta
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
+
           if [[ "${PR_TITLE}" =~ ^r/([0-9]+\.[0-9]+\.[0-9]+)[[:space:]]-[[:space:]](.+)$ ]]; then
             VERSION="${BASH_REMATCH[1]}"
             RELEASE_TITLE="${BASH_REMATCH[2]}"
@@ -29,7 +30,14 @@ jobs:
             exit 1
           fi
 
+          echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
+          echo "release_title=${RELEASE_TITLE}" >> "${GITHUB_OUTPUT}"
+
+      - name: Extract description & changelog from PR body
+        id: extractcontent
+        run: |
           PR_BODY="${{ github.event.pull_request.body }}"
+
           if [[ "${PR_BODY}" =~ ^##[[:space:]]Description$'\n\n'([^\n].+)$'\n\n'---$'\n\n'##[[:space:]]Changelog$'\n\n'(.*) ]]; then
             DESCRIPTION="${BASH_REMATCH[1]}"
             CHANGELOG="${BASH_REMATCH[2]}"
@@ -46,9 +54,6 @@ jobs:
             exit 1
           fi
 
-          echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
-          echo "release_title=${RELEASE_TITLE}" >> "${GITHUB_OUTPUT}"
-
           echo "description<<EOF" >> "${GITHUB_OUTPUT}"
           echo "${DESCRIPTION}" >> "${GITHUB_OUTPUT}"
           echo "EOF" >> "${GITHUB_OUTPUT}"
@@ -60,7 +65,6 @@ jobs:
       - name: Get last release version tag
         id: lasttag
         run: |
-          # List tags that match vX.Y.Z pattern, sort by version, take the latest
           LAST_TAG=$(git tag -l "v[0-9]*.[0-9]*.[0-9]*" \
             | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' \
             | sort -V \
@@ -72,26 +76,26 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git tag "v${{ steps.extract.outputs.version }}"
-          git push origin "v${{ steps.extract.outputs.version }}"
+          git tag "v${{ steps.extractmeta.outputs.version }}"
+          git push origin "v${{ steps.extractmeta.outputs.version }}"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.extract.outputs.version }}
-          name: ${{ steps.extract.outputs.release_title }}
+          tag_name: v${{ steps.extractmeta.outputs.version }}
+          name: ${{ steps.extractmeta.outputs.release_title }}
           body: |
             ## 🚀 Release Notes
 
-            ${{ steps.extract.outputs.description }}
+            ${{ steps.extractcontent.outputs.description }}
 
             ---
 
             ## 🔥 Changes Since Last Release
 
-            ${{ steps.extract.outputs.changelog }}
+            ${{ steps.extractcontent.outputs.changelog }}
 
-            **Full Changelog**: https://github.com/${{ github.repository }}/compare/${{ steps.lasttag.outputs.last_tag }}...v${{ steps.extract.outputs.version }}
+            **Full Changelog**: https://github.com/${{ github.repository }}/compare/${{ steps.lasttag.outputs.last_tag }}...v${{ steps.extractmeta.outputs.version }}
 
             ---
 

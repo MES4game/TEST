@@ -25,12 +25,6 @@ runs:
           cache-node-${{ hashFiles('package-lock.json') }}-
           cache-node-
 
-    - name: Test node cache
-      run: |
-        [ -d ~/.npm ] && echo "Using npm cache" || echo "No npm cache found"
-        [ -d node_modules ] && echo "Using node_modules cache" && ls -al node_modules || echo "No node_modules cache found"
-      shell: bash
-
     - name: Update npm
       if: ${{ inputs.install == 'true' }}
       run: npm install -g npm@latest
