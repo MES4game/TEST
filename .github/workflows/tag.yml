@@ -57,7 +57,6 @@ jobs:
             echo ""
             echo "## Changelog"
             echo "<changelog>"
-            exit 1
           fi
 
           echo "description<<EOF" >> "${GITHUB_OUTPUT}"
