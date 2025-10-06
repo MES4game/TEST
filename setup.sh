@@ -61,6 +61,8 @@ chmod -R +r "${GITHUB_SETUP_ASSETS_FOLDER}"
 gitSetupPart 'GIT CONFIG'
 cd "${GITHUB_SETUP_ROOT}"
 
+git remote set-url origin "$(git remote get-url origin | sed 's|^https://github.com/|git@github.com:|')"
+
 git config user.name "${GITHUB_SETUP_USER}"
 git config user.email "${GITHUB_SETUP_EMAIL}"
 git config user.signingkey "${GITHUB_SETUP_SSH_FOLDER}/${GITHUB_SETUP_SSH_KEY}_sign"
@@ -95,16 +97,30 @@ MSG_FILE="$1"
 MSG=$(cat "$MSG_FILE")
 BRANCH=$(git symbolic-ref --short HEAD)
 TYPES="feat|fix|docs|style|refactor|perf|test|chore"
-PATTERN="^(${TYPES}(\|(${TYPES}))*)\(${BRANCH}\): .+"
+PATTERN="^(${TYPES})(\|(${TYPES}))*\(${BRANCH}\): .+"
 
 if ! echo "${MSG}" | grep -Eq "${PATTERN}"; then
     echo "ERROR: Invalid commit message."
     echo "Your message must follow the format:"
     echo "<type>(<scope>): <comment>"
-    echo "Where <type> is one (or more separated by "|") of: ${TYPES}"
+    echo "Where <type> is one (or more separated by \"|\") of: ${TYPES}"
     echo "and <scope> must match your branch name: ${BRANCH}"
     echo "Example: feat(my-branch): add component x ..."
     echo "Example: feat|style|refactor(my-branch): add component x ... and fix style ... and refactor code ..."
+    echo
+    echo "Your commit message: ${MSG}"
+    echo "Branch name: ${BRANCH}"
+
+    if ! echo "${MSG}" | grep -Eq "^(${TYPES}(\|(${TYPES}))*)"; then
+        echo "Your <type> is not valid." 
+    fi
+    if ! echo "${MSG}" | grep -Eq "\(${BRANCH}\)"; then
+        echo "Your <scope> does not match your branch name."
+    fi
+    if ! echo "${MSG}" | grep -Eq ": .+"; then
+        echo "Your <comment> is empty."
+    fi
+
     exit 1
 fi
 
