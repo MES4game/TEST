@@ -91,7 +91,9 @@ jobs:
       - name: Restore webpack cache
         uses: actions/cache/restore@v4
         with:
-          path: .webpackcache
+          path: |
+            .webpackcache
+            build-test
           key: cache-webpack-${{ hashFiles('src/**/*', 'public/**/*', 'postcss.config.mjs', 'webpack.config.mjs', 'package.json') }}-${{ github.run_attempt }}-${{ github.run_id }}
           restore-keys: |
             cache-webpack-${{ hashFiles('src/**/*', 'public/**/*', 'postcss.config.mjs', 'webpack.config.mjs', 'package.json') }}-${{ github.run_attempt }}-
@@ -101,10 +103,13 @@ jobs:
       - name: Build Testing
         run: |
           [ -d .webpackcache ] && echo "Using webpack cache" && ls -al .webpackcache || echo "No webpack cache found"
-          npm run build
+          [ -d build-test ] && echo "Using build cache" && ls -al build-test || echo "No build cache found"
+          npm run build:run -- --output-path=build-test
 
       - name: Save webpack cache
         uses: actions/cache/save@v4
         with:
-          path: .webpackcache
+          path: |
+            .webpackcache
+            build-test
           key: cache-webpack-${{ hashFiles('src/**/*', 'public/**/*', 'postcss.config.mjs', 'webpack.config.mjs', 'package.json') }}-${{ github.run_attempt }}-${{ github.run_id }}
