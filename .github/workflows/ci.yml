@@ -76,7 +76,7 @@ jobs:
         run: echo TODO test
 
   build:
-    name: Test build of app
+    name: Run build for testing
     runs-on: ubuntu-latest
     needs: setup
     permissions:
