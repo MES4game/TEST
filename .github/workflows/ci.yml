@@ -45,7 +45,7 @@ jobs:
             cache-eslint-
 
       - name: Run ESLint
-        run: npm run lint:run -- --cache-location .eslintcache
+        run: npm run lint:run
 
   test:
     name: Run unit tests
@@ -89,7 +89,7 @@ jobs:
             cache-webpack-
 
       - name: Build Testing
-        run: npm run build:run -- --output-path=build --cache-location .webpackcache
+        run: npm run build:run -- --output-path=build
 
   analysis:
     name: Run CodeQL analysis
