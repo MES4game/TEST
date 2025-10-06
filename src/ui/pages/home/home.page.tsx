@@ -13,7 +13,7 @@ const HomePage: FC = (): ReactNode => {
 
     return (
         <>
-            <h1 className="text-red-500">In development</h1>
+            <h1 className="text-blue-500">In development</h1>
             <CircularProgress />
         </>
     );
