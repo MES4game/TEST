@@ -1,4 +1,4 @@
-name: Tag & Release on PR Merge
+name: Tag & Release on main PR Merge
 
 on:
   pull_request:
@@ -9,6 +9,7 @@ jobs:
   tag_and_release:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    environment: production
     permissions:
       contents: write
     steps:
@@ -86,6 +87,8 @@ jobs:
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.ADMIN_TOKEN }}
         with:
           tag_name: v${{ steps.extractmeta.outputs.version }}
           name: ${{ steps.extractmeta.outputs.release_title }}
