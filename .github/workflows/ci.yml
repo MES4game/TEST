@@ -27,16 +27,6 @@ jobs:
     needs: setup
     permissions:
       contents: read
-      security-events: write
-      packages: read
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-        - language: actions
-          build-mode: none
-        - language: javascript-typescript
-          build-mode: none
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -44,20 +34,18 @@ jobs:
       - name: Setup Node.js
         uses: ./.github/actions/setup-node
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+      - name: Use ESlint cache
+        uses: actions/cache@v4
         with:
-          languages: ${{ matrix.language }}
-          build-mode: ${{ matrix.build-mode }}
+          path: .eslintcache
+          key: cache-eslint-${{ hashFiles('src/**/*', 'eslint.config.mjs', 'tsconfig.json', 'package.json') }}-${{ github.run_attempt }}-${{ github.run_id }}
+          restore-keys: |
+            cache-eslint-${{ hashFiles('src/**/*', 'eslint.config.mjs', 'tsconfig.json', 'package.json') }}-${{ github.run_attempt }}-
+            cache-eslint-${{ hashFiles('src/**/*', 'eslint.config.mjs', 'tsconfig.json', 'package.json') }}-
+            cache-eslint-
 
       - name: Run ESLint
-        if: matrix.language == 'javascript-typescript'
-        uses: ./.github/actions/eslint
-
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
-        with:
-          category: "/language:${{matrix.language}}"
+        run: npm run lint:run -- --cache-location .eslintcache
 
   test:
     name: Run unit tests
@@ -88,8 +76,8 @@ jobs:
       - name: Setup Node.js
         uses: ./.github/actions/setup-node
 
-      - name: Restore webpack cache
-        uses: actions/cache/restore@v4
+      - name: Use webpack cache
+        uses: actions/cache@v4
         with:
           path: |
             .webpackcache
@@ -101,15 +89,44 @@ jobs:
             cache-webpack-
 
       - name: Build Testing
-        run: |
-          [ -d .webpackcache ] && echo "Using webpack cache" && ls -al .webpackcache/default-production || echo "No webpack cache found"
-          [ -d build ] && echo "Using build cache" && ls -al build || echo "No build cache found"
-          npm run build:run -- --output-path=build
+        run: npm run build:run -- --output-path=build --cache-location .webpackcache
 
-      - name: Save webpack cache
-        uses: actions/cache/save@v4
+  analysis:
+    name: Run CodeQL analysis
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      packages: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - language: actions
+          build-mode: none
+        - language: javascript-typescript
+          build-mode: none
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Use CodeQL cache
+        uses: actions/cache@v4
         with:
-          path: |
-            .webpackcache
-            build
-          key: cache-webpack-${{ hashFiles('src/**/*', 'public/**/*', 'postcss.config.mjs', 'webpack.config.mjs', 'package.json') }}-${{ github.run_attempt }}-${{ github.run_id }}
+          path: codeql-db
+          key: cache-codeql-${{ matrix.language }}-${{ github.run_attempt }}-${{ github.run_id }}
+          restore-keys: |
+            cache-codeql-${{ matrix.language }}-${{ github.run_attempt }}-
+            cache-codeql-${{ matrix.language }}-
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{matrix.language}}"
+          db-location: codeql-db
