@@ -1,9 +1,9 @@
 ## Description
 
-<!-- Please include a summary of the changes and the context -->
+<!-- add a brief description of the changes made in this pull request -->
 
 ---
 
 ## Changelog
 
-<!-- Optional: summarize changes that should appear in the release notes -->
+<!-- summarize changes (files -> brief technical description of the changes) -->
