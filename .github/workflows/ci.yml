@@ -73,7 +73,7 @@ jobs:
         uses: ./.github/actions/setup-node
 
       - name: Testing
-        run: echo TODO test
+        run: echo "TODO unit testing"
 
   build:
     name: Run build for testing
