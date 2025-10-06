@@ -1,0 +1,32 @@
+name: Run ESlint on code
+description: 
+runs:
+  using: "composite"
+  steps:
+    - name: Restore eslint cache
+      uses: actions/cache/restore@v4
+      with:
+        path: .eslintcache
+        key: cache-eslint-${{ hashFiles('src/**/*', 'eslint.config.mjs', 'tsconfig.json', 'package.json') }}-${{ github.run_attempt }}-${{ github.run_id }}
+        restore-keys: |
+          cache-eslint-${{ hashFiles('src/**/*', 'eslint.config.mjs', 'tsconfig.json', 'package.json') }}-${{ github.run_attempt }}-
+          cache-eslint-${{ hashFiles('src/**/*', 'eslint.config.mjs', 'tsconfig.json', 'package.json') }}-
+          cache-eslint-
+
+    - name: Run ESLint
+      env:
+        SARIF_ESLINT_IGNORE_SUPPRESSED: "true"
+      run: npm run lint:run -- --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
+      continue-on-error: true
+
+    - name: Save eslint cache
+      uses: actions/cache/save@v4
+      with:
+        path: .eslintcache
+        key: cache-eslint-${{ hashFiles('src/**/*', 'eslint.config.mjs', 'tsconfig.json', 'package.json') }}-${{ github.run_attempt }}-${{ github.run_id }}
+
+    - name: Upload eslint results to GitHub
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: eslint-results.sarif
+        wait-for-processing: true

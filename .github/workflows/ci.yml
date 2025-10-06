@@ -13,8 +13,11 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v5
-      - uses: ./.github/actions/setup-node
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: ./.github/actions/setup-node
         with:
           install: true
 
@@ -35,30 +38,11 @@ jobs:
         - language: javascript-typescript
           build-mode: none
     steps:
-      - uses: actions/checkout@v5
-      - uses: ./.github/actions/setup-node
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
-      - name: Restore eslint cache
-        uses: actions/cache/restore@v4
-        with:
-          path: .eslintcache
-          key: cache-eslint-${{ hashFiles('src/**/*', 'eslint.config.mjs', 'tsconfig.json', 'package.json') }}-${{ github.run_attempt }}-${{ github.run_id }}
-          restore-keys: |
-            cache-eslint-${{ hashFiles('src/**/*', 'eslint.config.mjs', 'tsconfig.json', 'package.json') }}-${{ github.run_attempt }}-
-            cache-eslint-${{ hashFiles('src/**/*', 'eslint.config.mjs', 'tsconfig.json', 'package.json') }}-
-            cache-eslint-
-
-      - name: Run ESLint
-        env:
-          SARIF_ESLINT_IGNORE_SUPPRESSED: "true"
-        run: npm run lint:run -- --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
-        continue-on-error: true
-
-      - name: Save eslint cache
-        uses: actions/cache/save@v4
-        with:
-          path: .eslintcache
-          key: cache-eslint-${{ hashFiles('src/**/*', 'eslint.config.mjs', 'tsconfig.json', 'package.json') }}-${{ github.run_attempt }}-${{ github.run_id }}
+      - name: Setup Node.js
+        uses: ./.github/actions/setup-node
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
@@ -66,11 +50,9 @@ jobs:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
 
-      - name: Upload eslint results to GitHub
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: eslint-results.sarif
-          wait-for-processing: true
+      - name: Run ESLint
+        if: matrix.language == 'javascript-typescript'
+        uses: ./.github/actions/eslint
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
@@ -84,8 +66,11 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v5
-      - uses: ./.github/actions/setup-node
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: ./.github/actions/setup-node
 
       - name: Testing
         run: echo TODO test
@@ -97,8 +82,11 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v5
-      - uses: ./.github/actions/setup-node
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: ./.github/actions/setup-node
 
       - name: Restore webpack cache
         uses: actions/cache/restore@v4
