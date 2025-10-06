@@ -10,7 +10,7 @@ Don't forget to run `chmod +x setup.sh && ./setup.sh` after cloning the reposito
 
 - [Usage](#usage)
   - [Node.JS](#nodejs)
-  - [Docker image](#docker-image)
+  - [Docker](#docker)
 - [Structure](#structure)
 - [Commands](#commands)
 - [Git conventions](#git-conventions)
@@ -38,7 +38,7 @@ Next steps define how to download the project and run it under a port/path, you 
   3. for development: run `npm run dev:run -- --port=<number>` and replace `<port>` with the port you want
   4. for production: run `npm run build:run -- --output-path=<path>` and replace `<path>` with the path of the folder you want (it needs to be created before)
 
-- ### Docker image
+- ### Docker
   - NO need to clone the repository
   - image: [![Docker Image Version](https://img.shields.io/docker/v/ciapops/site-bde-front?sort=semver) ![Docker Image Size](https://img.shields.io/docker/image-size/ciapops/site-bde-front?sort=semver)](https://hub.docker.com/r/ciapops/site-bde-front)
   - docker-compose:
@@ -122,6 +122,8 @@ Next steps define how to download the project and run it under a port/path, you 
   - example: `feat(user-42): add login feature`
   - example: `feat|perf|style(home-21): add last event feature, improve performance for render and fix styles of first section`
   - every commit must be signed with a GPG/SSH key (set it up with `./setup.sh`)
+  - make reasonable sized commits (do not commit everything in one commit, but do not make too many small commits either)
+  - write meaningful commit messages (do not use `fix` or `update` as comment, be more specific)
 
 - ### PR:
   - title: `merge(<source>-><target>): <comment>`
@@ -129,9 +131,15 @@ Next steps define how to download the project and run it under a port/path, you 
     - `<target>`: target branch
     - `<comment>`: short description of the PR
   - description
-    - detailed description of the changes made in the PR (if necessary)
-    - every commits included by the PR will be listed automatically after the description
+    - follow the template provided by GitHub
+    - every commits included by the PR will be listed automatically after the description in the merge commit
   - reviewers: at least one reviewer must be assigned (preferably the repository admin or the service manager)
+  - In case of a release PR (from `dev` to `main`):
+    - title: `r/<version> - <name>`
+      - `<version>`: version of the release (must follow [semantic versioning](https://semver.org/), e.g. `1.2.3`)
+      - `<name>`: name of the release
+    - description:
+      - follow the template provided by GitHub
 
 ---
 

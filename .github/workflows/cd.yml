@@ -72,3 +72,5 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-contexts: |
             docker_config_folder=${{ vars.DOCKER_CONFIG_FOLDER || './.docker' }}
+          cache-from: type=registry,ref=${{ steps.meta.outputs.tags }}
+          cache-to: type=registry,mode=max,ref=${{ steps.meta.outputs.tags }}

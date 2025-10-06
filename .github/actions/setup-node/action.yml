@@ -2,7 +2,7 @@ name: Setup Node + npm cache
 description: Checkout repo, setup Node.js, and cache npm dependencies
 inputs:
   install:
-    description: 'If true, skip the rest of this action'
+    description: 'If true, skip the install part of this action'
     required: false
     default: false
 runs:

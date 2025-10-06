@@ -39,6 +39,7 @@
     "exclude": [
         ".docker",
         ".github",
+        ".webpackcache",
         "assets",
         "build",
         "node_modules",

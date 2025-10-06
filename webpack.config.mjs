@@ -8,26 +8,26 @@ const IS_PROD = process.env.NODE_ENV !== "development";
 const PORT    = Number(process.env.PORT ?? 3000);
 
 export default {
-    entry: path.resolve(DIRNAME, "src", "index.tsx"),
+    entry : path.resolve(DIRNAME, "src", "index.tsx"),
     output: {
-        filename: "bundle.[contenthash].js",
-        path: path.resolve(DIRNAME, "build"),
-        clean: true,
+        filename  : "bundle.[contenthash].js",
+        path      : path.resolve(DIRNAME, "build"),
+        clean     : true,
         publicPath: "/",
     },
     resolve: {
         extensions: [".tsx", ".ts", ".jsx", ".js"],
-        alias: {
+        alias     : {
             "@": path.resolve(DIRNAME, "src"),
         },
     },
     module: {
         rules: [
             {
-                test: /\.[jt]sx?$/,
+                test   : /\.[jt]sx?$/,
                 exclude: /node_modules/,
-                use: {
-                    loader: "ts-loader",
+                use    : {
+                    loader : "ts-loader",
                     options: {
                         transpileOnly: true,
                     },
@@ -35,7 +35,7 @@ export default {
             },
             {
                 test: /\.css$/i,
-                use: [
+                use : [
                     IS_PROD ? MiniCssExtractPlugin.loader : "style-loader",
                     "css-loader",
                     "postcss-loader",
@@ -45,70 +45,68 @@ export default {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: path.resolve(DIRNAME, "public", "index.html"),
-            inject: "body",
+            template     : path.resolve(DIRNAME, "public", "index.html"),
+            inject       : "body",
             scriptLoading: "defer",
         }),
-        ...(
-            IS_PROD
-                ? [
-                    new MiniCssExtractPlugin({
-                        filename: "css/[name].[contenthash].css",
-                        chunkFilename: "css/[id].[contenthash].css",
-                        ignoreOrder: false,
-                    }),
-                ]
-                : [new ReactRefreshWebpackPlugin()]
-        ),
+        ...IS_PROD
+            ? [
+                new MiniCssExtractPlugin({
+                    filename     : "css/[name].[contenthash].css",
+                    chunkFilename: "css/[id].[contenthash].css",
+                    ignoreOrder  : false,
+                }),
+            ]
+            : [new ReactRefreshWebpackPlugin()],
     ],
-    devtool: IS_PROD ? "source-map" : "eval-cheap-module-source-map",
+    devtool  : IS_PROD ? "source-map" : "eval-cheap-module-source-map",
     devServer: {
         static: [
             {
                 directory: path.join(DIRNAME, "public"),
-                watch: true,
+                watch    : true,
             },
             {
                 directory: path.join(DIRNAME, "assets"),
-                watch: true,
+                watch    : true,
             },
         ],
         historyApiFallback: true,
-        hot: true,
-        host: "127.0.0.1",
-        port: PORT,
-        allowedHosts: ["127.0.0.1"],
-        compress: true,
-        headers: {
-            "X-Frame-Options": "DENY",
+        hot               : true,
+        host              : "127.0.0.1",
+        port              : PORT,
+        allowedHosts      : ["127.0.0.1"],
+        compress          : true,
+        headers           : {
+            "X-Frame-Options"       : "DENY",
             "X-Content-Type-Options": "nosniff",
-            "Referrer-Policy": "no-referrer",
-            "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+            "Referrer-Policy"       : "no-referrer",
+            "Permissions-Policy"    : "camera=(), microphone=(), geolocation=()",
         },
         client: {
-            overlay: true,
+            overlay     : true,
             webSocketURL: {
                 hostname: "127.0.0.1",
-                port: 443,
+                port    : 443,
                 protocol: "wss",
                 pathname: "/ws",
             },
         },
     },
     optimization: {
-        minimize: IS_PROD,
+        minimize   : IS_PROD,
         splitChunks: {
             chunks: "all",
         },
         runtimeChunk: "single",
     },
     performance: {
-        hints: IS_PROD ? "warning" : false,
-        maxAssetSize: 250000,
+        hints            : IS_PROD ? "warning" : false,
+        maxAssetSize     : 250000,
         maxEntrypointSize: 250000,
     },
     cache: {
-        type: "filesystem",
+        type          : "filesystem",
         cacheDirectory: path.resolve(DIRNAME, ".webpackcache"),
     },
 };

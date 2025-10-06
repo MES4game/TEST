@@ -15,7 +15,7 @@ const IS_JS_TYPED = Boolean(
     ).compilerOptions?.checkJs,
 );
 
-console.log(`Linting JS files with type inference: ${IS_JS_TYPED}`);  // eslint-disable-line no-undef
+if (IS_JS_TYPED) console.log("Linting JS files with type inference");
 
 const NAMING_CONVENTION_RECORD = {
     // To show when the config do not cover something
