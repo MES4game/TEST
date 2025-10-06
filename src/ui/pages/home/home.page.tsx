@@ -1,4 +1,5 @@
 import { FC, ReactNode, useEffect } from "react";
+import { CircularProgress } from "@mui/material";
 import "@/ui/pages/home/home.page.css";
 
 const HomePage: FC = (): ReactNode => {
@@ -11,7 +12,10 @@ const HomePage: FC = (): ReactNode => {
     });
 
     return (
-        <h1>In development</h1>
+        <>
+            <h1 className="text-red-500">In development</h1>
+            <CircularProgress />
+        </>
     );
 };
 
